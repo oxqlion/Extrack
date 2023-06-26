@@ -1,0 +1,845 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package alp_oop_try1;
+
+import com.toedter.calendar.JCalendar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import com.toedter.calendar.JDateChooser;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Date;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import static sun.net.www.http.HttpClient.New;
+
+/**
+ *
+ * @author Rafi Abhista
+ */
+public class one extends javax.swing.JFrame {
+
+    String tmpTanggal = "";
+    int btnSpacing = 75;
+    int user_id = -1;
+    User user = new User();
+    Wallet walletYangLagiDipencet;
+    String tmpWallet = "";
+    int wallet_id = 1;
+    int i_wallet = -1;
+    int totalSaldoSemuaWallet = 0;
+    int lo = 0;
+
+    /**
+     * Creates new form one
+     */
+    public one(int user_id) {
+        initComponents();
+        this.user_id = user_id;
+        System.out.println("User ID: " + user_id);
+
+        try {
+            int i = 1;
+            System.out.println("masuk sini");
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+            ResultSet data = stat.executeQuery("SELECT * FROM wallet WHERE user_id = '" + user_id + "';");
+
+            while (data.next()) {
+                Wallet wallet = new Wallet(data.getString("wallet_name"), data.getInt("id"));
+                user.addWallet(wallet);
+                wallet.setSaldoWallet(data.getInt("wallet_saldo"));
+                totalSaldoSemuaWallet += data.getInt("wallet_saldo");
+                jLabel4.setText(Integer.toString(totalSaldoSemuaWallet));
+
+                System.out.println(Arrays.toString(user.getAllWallet()));
+                tampilkanButton(data.getString("wallet_name"), btnSpacing, Integer.parseInt(data.getString("id")));
+                i_wallet = data.getInt("id");
+                btnSpacing += 60;
+                i++;
+
+            }
+
+            String[] simpanNama = new String[i];
+            int j = 0;
+
+            ResultSet data2 = stat.executeQuery("SELECT wallet_name, id FROM wallet WHERE user_id = '" + user_id + "';");
+
+            while (data2.next()) {
+                walletYangLagiDipencet = user.getWallet(data2.getString("wallet_name"));
+
+                String wName = data2.getString("wallet_name");
+                simpanNama[j] = wName;
+                j++;
+            }
+
+            ResultSet data1 = stat.executeQuery("SELECT * FROM history WHERE user_id = '" + user_id + "';");
+
+            for (int k = 0; k < i; k++) {
+                while (data1.next()) {
+                    walletYangLagiDipencet = user.getWalletByID(data1.getInt("wallet_id"));
+                    LocalDate datee = data1.getDate("date").toLocalDate();
+                    LocalTime time = data1.getTime("time").toLocalTime();
+
+                    History history = new History(data1.getInt("nominal"), data1.getString("description"), datee, time, data1.getString("keterangan"));
+                    walletYangLagiDipencet.addHistory(history);
+                    String[] str = data1.getString("description").split(" ");
+                    for (String xa : str) {
+                        walletYangLagiDipencet.saveData(xa, history);
+                    }
+                }
+            }
+
+//            for (int i = 0; i < user.getAllWallet().length; i++) {
+//                tampilkanButton(data.getString("wallet_name"), btnSpacing, i);
+//                btnSpacing += 60;
+//                this.revalidate();
+//                this.repaint();
+//            }
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+
+        System.out.println("User Wallet: " + Arrays.toString(user.getAllWallet()));
+
+//        String tanggal1 = ((JTextField) calendar.getDateEditor().getUiComponent()).getText();
+//        tmpTanggal = tanggal1;
+//        int totalSaldo = getPemasukan() - getPengeluaran();
+//        totalSaldoVariable.setText(Integer.toString(totalSaldo));
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        Pengeluaran = new javax.swing.JButton();
+        TotalSaldo = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        HistoryTable = new javax.swing.JTable();
+        AddWallet = new javax.swing.JButton();
+        Pemasukan = new javax.swing.JButton();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        desc = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        WalletNameInput = new javax.swing.JTextArea();
+        totalSaldoVariable = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        calendarBtn = new javax.swing.JButton();
+        keySearch = new javax.swing.JTextField();
+        searching = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 196, 255));
+
+        Pengeluaran.setText("Pengeluaran");
+        Pengeluaran.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PengeluaranActionPerformed(evt);
+            }
+        });
+
+        TotalSaldo.setText("Total Saldo : ");
+        TotalSaldo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                TotalSaldoKeyReleased(evt);
+            }
+        });
+
+        HistoryTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nominal", "Deskripsi", "Tanggal", "Jam", "Keterangan"
+            }
+        ));
+        jScrollPane6.setViewportView(HistoryTable);
+
+        AddWallet.setText("Add Wallet");
+        AddWallet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddWalletActionPerformed(evt);
+            }
+        });
+
+        Pemasukan.setText("Pemasukan");
+        Pemasukan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PemasukanActionPerformed(evt);
+            }
+        });
+
+        desc.setColumns(20);
+        desc.setRows(5);
+        jScrollPane8.setViewportView(desc);
+
+        jLabel1.setText("Input Nominal :");
+
+        jLabel2.setText("Keterangan : ");
+
+        WalletNameInput.setColumns(20);
+        WalletNameInput.setRows(5);
+        jScrollPane1.setViewportView(WalletNameInput);
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
+        calendarBtn.setText("Calendar");
+        calendarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                calendarBtnActionPerformed(evt);
+            }
+        });
+
+        searching.setText("Search");
+        searching.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchingActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("jLabel4");
+
+        jLabel5.setText("Saldo Wallet :");
+
+        jLabel6.setText("jLabel6");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(AddWallet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(TotalSaldo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(totalSaldoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(calendarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Pengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jTextField1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(keySearch, javax.swing.GroupLayout.PREFERRED_SIZE, 449, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(searching))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TotalSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(totalSaldoVariable)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addGap(0, 356, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(keySearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searching, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(20, 20, 20)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(AddWallet, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(Pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(calendarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void PengeluaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PengeluaranActionPerformed
+        // TODO add your handling code here:
+        int jumlah = -1;
+        if (walletYangLagiDipencet != null) {
+            System.out.println("jjjjjj : " + jTextField1.getText());
+            if (!jTextField1.getText().equals("")) {
+                jumlah = Integer.parseInt(jTextField1.getText());
+            } else {
+                System.out.println("Input : " + jTextField1.getText());
+                System.out.println("input emptyyy");
+            }
+            History history = new History(Integer.parseInt(jTextField1.getText()), desc.getText(), LocalDate.now(), LocalTime.now(), "pengeluaran");
+            walletYangLagiDipencet.addHistory(history);
+
+            System.out.println("Total saldo semuua wallet pengeluaran : " + totalSaldoSemuaWallet);
+            totalSaldoSemuaWallet -= Integer.parseInt(jTextField1.getText());
+            jLabel4.setText(Integer.toString(totalSaldoSemuaWallet));
+
+            String[] str = desc.getText().split(" ");
+            for (String xa : str) {
+                walletYangLagiDipencet.saveData(xa, history);
+            }
+
+            LocalDate localDate = LocalDate.now();//For reference
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+            String a = localDate.format(formatter);
+
+            LocalTime time = LocalTime.now();
+            DateTimeFormatter b = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String c = time.format(b);
+
+            System.out.println("Formatted time: " + c);
+            tambahHistoryKeTabel(jTextField1.getText(), desc.getText(), a, c, "pengeluaran");
+
+            System.out.println("Hello World!");
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+                Statement stat = conn.createStatement();
+
+                String query = "INSERT INTO `history` (`id`, `nominal`, `description`, `date`, `time`, `keterangan`, `wallet_id`, `user_id`) VALUES (NULL, '" + jTextField1.getText() + "', '" + desc.getText() + "', '" + LocalDate.now() + "', '" + LocalTime.now() + "', 'pengeluaran', '" + walletYangLagiDipencet.getWalletId() + "', '" + user_id + "');";
+                PreparedStatement statement = conn.prepareStatement(query);
+
+                int rowsInserted = statement.executeUpdate();
+                System.out.println(rowsInserted + " row(s) inserted.");
+
+                System.out.println("saldo wallet yang lagi dipencet : " + walletYangLagiDipencet.getUangWallet());
+                System.out.println("input user pengeluaran : " + Integer.parseInt(jTextField1.getText()));
+                int sisaSaldo = walletYangLagiDipencet.getUangWallet() - Integer.parseInt(jTextField1.getText());
+                System.out.println("Sisa saldo pengeluaran : " + sisaSaldo);
+
+                Statement stat2 = conn.createStatement();
+                String query2 = "UPDATE wallet SET wallet_saldo = '" + sisaSaldo + "' WHERE id = '" + walletYangLagiDipencet.getWalletId() + "'  AND user_id = '" + user_id + "';";
+                PreparedStatement statemen2t = conn.prepareStatement(query2);
+                int rowsInserted2 = statemen2t.executeUpdate();
+                System.out.println(rowsInserted2 + " update row(s) inserted.");
+                walletYangLagiDipencet.minUangWallet(jumlah);
+
+            } catch (Exception e) {
+                System.out.print("Error : ");
+                e.printStackTrace();
+            }
+
+            if (walletYangLagiDipencet.getHistory().size() > 0) {
+                System.out.println("History added : " + history.getHistoryNominal());
+            }
+        } else {
+            System.out.println("No Wallet Selected");
+        }
+    }//GEN-LAST:event_PengeluaranActionPerformed
+
+    public String getKeterangan(int wallet_id) {
+        initComponents();
+        String val = "";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+            ResultSet data = stat.executeQuery("SELECT * FROM history WHERE id = '" + wallet_id + "';");
+            while (data.next()) {
+                val = data.getString("keterangan");
+            }
+            System.out.println("Val : " + val);
+            return val;
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+        return val;
+    }
+
+    public void createButton(String text, int space) {
+        JButton walletButton = new JButton(text);
+        walletButton.setBounds(10, space, 170, 50);
+
+        int saldoWallet = 0;
+
+//      Input Wallet ke Database  
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+
+            String query = "INSERT INTO `wallet` (`id`, `wallet_name`, `wallet_saldo`, `user_id`) VALUES (NULL, '" + text + "', '" + 0 + "', '" + user_id + "');";
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            int rowsInserted = statement.executeUpdate();
+            System.out.println(rowsInserted + " row(s) inserted.");
+
+            ResultSet data = stat.executeQuery("SELECT * FROM users;");
+            while (data.next()) {
+                System.out.println(data.getString("username"));
+            }
+
+            Statement stat2 = conn.createStatement();
+            ResultSet data2 = stat2.executeQuery("SELECT * FROM wallet");
+            while(data2.next()) {
+                lo = data.getInt("id");
+            }
+            Wallet newWallet = new Wallet(text, lo);
+            user.addWallet(newWallet);
+
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+
+        walletButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Add your action logic here
+                // This block will be executed when the button is clicked
+                DefaultTableModel model = (DefaultTableModel) HistoryTable.getModel();
+                model.setRowCount(0);
+                walletYangLagiDipencet = user.getWallet(text);
+                System.out.println("Wallet yang lagi dipencet ini : " + walletYangLagiDipencet.getWallet());
+                tmpWallet = text;
+//                wallet_id = id;
+                String val = "";
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+                    Statement stat = conn.createStatement();
+                    ResultSet data = stat.executeQuery("SELECT * FROM history WHERE wallet_id = '" + walletYangLagiDipencet.getWalletId() + "';");
+                    while (data.next()) {
+                        val = data.getString("keterangan");
+                        tambahHistoryKeTabel(data.getString("nominal"), data.getString("description"), data.getString("date"), data.getString("time"), data.getString("keterangan"));
+                    }
+                    System.out.println("Val : " + val);
+                } catch (Exception err) {
+                    System.err.println("Error : " + err);
+                }
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+                    Statement stat = conn.createStatement();
+                    ResultSet data = stat.executeQuery("SELECT * FROM wallet WHERE user_id = '" + user_id + "';");
+                    while (data.next()) {
+                        if (data.getString("wallet_name").equals(text)) {
+                            jLabel6.setText(Integer.toString(data.getInt("wallet_saldo")));
+                        } else {
+                            System.out.println("not this one");
+                        }
+                    }
+                } catch (Exception err) {
+                    System.err.println("ada error hayoo : " + err);
+                }
+
+                System.out.println("Button " + walletYangLagiDipencet.getWallet() + " clicked!");
+                System.out.println("Wallet Id " + walletYangLagiDipencet.getWalletId() + " clicked!");
+            }
+        });
+
+        this.add(walletButton);
+        this.revalidate();
+        this.repaint();
+        setVisible(true);
+    }
+
+    public void tampilkanButton(String text, int space, int id) {
+        JButton walletButton = new JButton(text);
+        walletButton.setBounds(10, space, 170, 50);
+
+        walletButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) HistoryTable.getModel();
+                model.setRowCount(0);
+                walletYangLagiDipencet = user.getWallet(text);
+                System.out.println("Wallet yang lagi dipencet ini : " + walletYangLagiDipencet.getWallet());
+                wallet_id = id;
+                tmpWallet = text;
+                String val = "";
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+                    Statement stat = conn.createStatement();
+                    ResultSet data = stat.executeQuery("SELECT * FROM history WHERE wallet_id = '" + wallet_id + "';");
+                    while (data.next()) {
+                        val = data.getString("keterangan");
+                        tambahHistoryKeTabel(data.getString("nominal"), data.getString("description"), data.getString("date"), data.getString("time"), data.getString("keterangan"));
+                    }
+                    System.out.println("Val : " + val);
+                } catch (Exception err) {
+                    System.err.println("Error : " + err);
+                }
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+                    Statement stat = conn.createStatement();
+                    ResultSet data = stat.executeQuery("SELECT * FROM wallet WHERE user_id = '" + user_id + "';");
+                    while (data.next()) {
+                        if (data.getString("wallet_name").equals(text)) {
+                            jLabel6.setText(Integer.toString(data.getInt("wallet_saldo")));
+                        } else {
+                            System.out.println("not this one");
+                        }
+                    }
+                } catch (Exception err) {
+                    System.err.println("ada error hayoo : " + err);
+                }
+
+//                System.out.println("Button " + text + " clicked!");
+                System.out.println("Button " + walletYangLagiDipencet.getWallet() + " clicked!");
+                System.out.println("Wallet Id " + walletYangLagiDipencet.getWalletId() + " clicked!");
+
+            }
+        });
+
+        this.add(walletButton);
+        this.revalidate();
+        this.repaint();
+        setVisible(true);
+    }
+
+
+    private void AddWalletActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddWalletActionPerformed
+        String walletName = WalletNameInput.getText();
+        createButton(walletName, btnSpacing);
+        DefaultTableModel model = (DefaultTableModel) HistoryTable.getModel();
+        model.setRowCount(0);
+        i_wallet++;
+        Wallet wallet = new Wallet(walletName, i_wallet);
+        System.out.println("I WALLET : " + i_wallet);
+        user.addWallet(wallet);
+
+        btnSpacing += 60;
+    }//GEN-LAST:event_AddWalletActionPerformed
+
+    private void PemasukanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PemasukanActionPerformed
+        // TODO add your handling code here:
+        int jumlah = -1;
+        if (walletYangLagiDipencet != null) {
+            System.out.println("jjjjjj : " + jTextField1.getText());
+            if (!jTextField1.getText().equals("")) {
+                jumlah = Integer.parseInt(jTextField1.getText());
+            } else {
+                System.out.println("Input : " + jTextField1.getText());
+                System.out.println("input emptyyy");
+            }
+
+            History history = new History(Integer.parseInt(jTextField1.getText()), desc.getText(), LocalDate.now(), LocalTime.now(), "pemasukan");
+            walletYangLagiDipencet.addHistory(history);
+
+            System.out.println("Total saldo semuua wallet pemasukan : " + totalSaldoSemuaWallet);
+            totalSaldoSemuaWallet += Integer.parseInt(jTextField1.getText());
+            jLabel4.setText(Integer.toString(totalSaldoSemuaWallet));
+
+            String[] str = desc.getText().split(" ");
+            for (String xa : str) {
+                walletYangLagiDipencet.saveData(xa, history);
+            }
+            LocalDate localDate = LocalDate.now();//For reference
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+            String a = localDate.format(formatter);
+
+            LocalTime time = LocalTime.now();
+            DateTimeFormatter b = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String c = time.format(b);
+
+            System.out.println("Formatted time: " + c);
+            tambahHistoryKeTabel(jTextField1.getText(), desc.getText(), a, c, "pemasukan");
+
+            System.out.println("Hello World!");
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+                Statement stat = conn.createStatement();
+
+                String query = "INSERT INTO `history` (`id`, `nominal`, `description`, `date`, `time`, `keterangan`, `wallet_id`, `user_id`) VALUES (NULL, '" + jTextField1.getText() + "', '" + desc.getText() + "', '" + LocalDate.now() + "', '" + LocalTime.now() + "', 'pemasukan', '" + walletYangLagiDipencet.getWalletId() + "', '" + user_id + "');";
+                PreparedStatement statement = conn.prepareStatement(query);
+
+                int rowsInserted = statement.executeUpdate();
+                System.out.println(rowsInserted + " row(s) inserted.");
+
+                System.out.println("saldo wallet yang lagi dipencet : " + walletYangLagiDipencet.getUangWallet());
+                System.out.println("input user pemasukan : " + Integer.parseInt(jTextField1.getText()));
+                int sisaSaldo = walletYangLagiDipencet.getUangWallet() + Integer.parseInt(jTextField1.getText());
+                System.out.println("Sisa saldo pemasukan : " + sisaSaldo);
+
+                Statement stat2 = conn.createStatement();
+                String query2 = "UPDATE wallet SET wallet_saldo = '" + sisaSaldo + "' WHERE id = '" + walletYangLagiDipencet.getWalletId() + "'  AND user_id = '" + user_id + "';";
+                PreparedStatement statemen2t = conn.prepareStatement(query2);
+                int rowsInserted2 = statemen2t.executeUpdate();
+                System.out.println(rowsInserted2 + " update row(s) inserted.");
+                walletYangLagiDipencet.plusUangWallet(jumlah);
+            } catch (Exception e) {
+                System.out.print("Error : ");
+                e.printStackTrace();
+            }
+
+            if (walletYangLagiDipencet.getHistory().size() > 0) {
+                System.out.println("History added : " + history.getHistoryNominal());
+            }
+        } else {
+            System.out.println("No Wallet Selected");
+        }
+    }//GEN-LAST:event_PemasukanActionPerformed
+
+    private void tambahHistoryKeTabel(String nominal, String deskripsi, String tanggal, String waktu, String keterangan) {
+        String[] arr = {nominal, deskripsi, tanggal, waktu, keterangan};
+        DefaultTableModel model = (DefaultTableModel) HistoryTable.getModel();
+        model.addRow(arr);
+    }
+
+    public int getPemasukan() {
+        initComponents();
+        int val = 0;
+
+        try {
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+            ResultSet data = stat.executeQuery("SELECT SUM(nominal) FROM history WHERE keterangan = 'pemasukan';");
+            while (data.next()) {
+                val = data.getInt("SUM(nominal)");
+
+            }
+            System.out.println("Val : " + val);
+            return val;
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+        return val;
+    }
+
+    public int getPengeluaran() {
+        initComponents();
+        int val = 0;
+
+        try {
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+            ResultSet data = stat.executeQuery("SELECT SUM(nominal) FROM history WHERE keterangan = 'pengeluaran';");
+            while (data.next()) {
+                val = data.getInt("SUM(nominal)");
+            }
+            System.out.println("Val : " + val);
+
+            return val;
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+        return val;
+    }
+
+    private void TotalSaldoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TotalSaldoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TotalSaldoKeyReleased
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void calendarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calendarBtnActionPerformed
+        // TODO add your handling code here:
+        dateChooser1 dateChooserFrame = new dateChooser1(user_id);
+        dateChooserFrame.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_calendarBtnActionPerformed
+
+    private void searchingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchingActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) HistoryTable.getModel();
+        model.setRowCount(0);
+
+        String key = keySearch.getText();
+        System.out.println("Key Search : " + key);
+        walletYangLagiDipencet.search(key);
+
+        for (String wall : user.getAllWallet()) {
+            if (user.getWallet(wall).search(key) != null) {
+                String[] halo = user.getWallet(wall).search(key).getHistory();
+                tambahHistoryKeTabel(halo[0], halo[1], halo[2], halo[3], halo[4]);
+            } else {
+                System.out.println("No data here");
+            }
+        }
+    }//GEN-LAST:event_searchingActionPerformed
+
+    public int getPemasukan1(String tanggal) {
+        initComponents();
+        System.out.println("date pemasukan: " + tanggal);
+        int val = 0;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+            ResultSet data = stat.executeQuery("SELECT SUM(nominal) FROM history WHERE date = '" + tanggal + "' AND keterangan = 'pemasukan' AND user_id = " + user_id + ";");
+            while (data.next()) {
+                val = data.getInt("SUM(nominal)");
+
+            }
+            return val;
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+        return val;
+    }
+
+    public int getPengeluaran1(String tanggal) {
+        initComponents();
+        System.out.println("date pengeluaran : " + tanggal);
+        int val = 0;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/extrack", "root", "");
+            Statement stat = conn.createStatement();
+
+            ResultSet data = stat.executeQuery("SELECT SUM(nominal) FROM history WHERE date = '" + tanggal + "' AND keterangan = 'pengeluaran' AND user_id = " + user_id + ";");
+
+            while (data.next()) {
+                val = data.getInt("SUM(nominal)");
+            }
+
+            return val;
+        } catch (Exception e) {
+            System.out.print("Error : ");
+            e.printStackTrace();
+        }
+        return val;
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(one.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(one.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(one.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(one.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+//                new one(user_id).setVisible(true);
+                new auth().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddWallet;
+    private javax.swing.JTable HistoryTable;
+    private javax.swing.JButton Pemasukan;
+    private javax.swing.JButton Pengeluaran;
+    private javax.swing.JLabel TotalSaldo;
+    private javax.swing.JTextArea WalletNameInput;
+    private javax.swing.JButton calendarBtn;
+    private javax.swing.JTextArea desc;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField keySearch;
+    private javax.swing.JButton searching;
+    private javax.swing.JLabel totalSaldoVariable;
+    // End of variables declaration//GEN-END:variables
+}
